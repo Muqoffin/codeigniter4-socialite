@@ -5,6 +5,14 @@ namespace Fluent\Socialite\Helpers;
 use ArrayAccess;
 use Closure;
 
+use function array_key_exists;
+use function array_shift;
+use function count;
+use function explode;
+use function is_array;
+use function is_null;
+use function strpos;
+
 class Arr
 {
     /**
@@ -32,7 +40,7 @@ class Arr
     /**
      * Determine if the given key exists in the provided array.
      *
-     * @param  \ArrayAccess|array  $array
+     * @param ArrayAccess|array $array
      * @param  string|int  $key
      * @return bool
      */
@@ -48,7 +56,7 @@ class Arr
     /**
      * Get an item from an array using "dot" notation.
      *
-     * @param  \ArrayAccess|array  $array
+     * @param ArrayAccess|array $array
      * @param  string|int|null  $key
      * @param  mixed  $default
      * @return mixed
@@ -121,7 +129,7 @@ class Arr
 
         return $array;
     }
-    
+
     /**
      * Add an element to an array using "dot" notation if it doesn't exist.
      *
@@ -204,11 +212,10 @@ class Arr
      * Return the first element in an array passing a given truth test.
      *
      * @param  iterable  $array
-     * @param  callable|null  $callback
      * @param  mixed  $default
      * @return mixed
      */
-    public static function first($array, callable $callback = null, $default = null)
+    public static function first($array, ?callable $callback = null, $default = null)
     {
         if (is_null($callback)) {
             if (empty($array)) {

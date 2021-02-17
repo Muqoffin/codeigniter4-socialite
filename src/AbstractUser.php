@@ -5,6 +5,8 @@ namespace Fluent\Socialite;
 use ArrayAccess;
 use Fluent\Socialite\Contracts\UserInterface;
 
+use function array_key_exists;
+
 abstract class AbstractUser implements ArrayAccess, UserInterface
 {
     /**

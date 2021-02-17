@@ -5,6 +5,9 @@ namespace Fluent\Socialite\Two;
 use Exception;
 use Fluent\Socialite\Helpers\Arr;
 
+use function in_array;
+use function json_decode;
+
 class BitbucketProvider extends AbstractProvider
 {
     /**
@@ -42,7 +45,7 @@ class BitbucketProvider extends AbstractProvider
      */
     protected function getUserByToken($token)
     {
-        $userUrl = 'https://api.bitbucket.org/2.0/user?access_token='.$token;
+        $userUrl = 'https://api.bitbucket.org/2.0/user?access_token=' . $token;
 
         $response = $this->getHttpClient()->get($userUrl);
 
@@ -63,7 +66,7 @@ class BitbucketProvider extends AbstractProvider
      */
     protected function getEmailByToken($token)
     {
-        $emailsUrl = 'https://api.bitbucket.org/2.0/user/emails?access_token='.$token;
+        $emailsUrl = 'https://api.bitbucket.org/2.0/user/emails?access_token=' . $token;
 
         try {
             $response = $this->getHttpClient()->get($emailsUrl);
@@ -85,12 +88,12 @@ class BitbucketProvider extends AbstractProvider
      */
     protected function mapUserToObject(array $user)
     {
-        return (new User)->setRaw($user)->map([
-            'id' => $user['uuid'],
+        return (new User())->setRaw($user)->map([
+            'id'       => $user['uuid'],
             'nickname' => $user['username'],
-            'name' => Arr::get($user, 'display_name'),
-            'email' => Arr::get($user, 'email'),
-            'avatar' => Arr::get($user, 'links.avatar.href'),
+            'name'     => Arr::get($user, 'display_name'),
+            'email'    => Arr::get($user, 'email'),
+            'avatar'   => Arr::get($user, 'links.avatar.href'),
         ]);
     }
 
@@ -103,8 +106,8 @@ class BitbucketProvider extends AbstractProvider
     public function getAccessToken($code)
     {
         $response = $this->getHttpClient()->post($this->getTokenUrl(), [
-            'auth' => [$this->clientId, $this->clientSecret],
-            'headers' => ['Accept' => 'application/json'],
+            'auth'        => [$this->clientId, $this->clientSecret],
+            'headers'     => ['Accept' => 'application/json'],
             'form_params' => $this->getTokenFields($code),
         ]);
 

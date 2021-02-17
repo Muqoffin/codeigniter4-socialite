@@ -2,6 +2,13 @@
 
 namespace Fluent\Socialite\Helpers;
 
+use function base64_encode;
+use function random_bytes;
+use function str_replace;
+use function strlen;
+use function strncmp;
+use function substr;
+
 class Str
 {
     /**
@@ -24,7 +31,7 @@ class Str
 
         return $string;
     }
-    
+
     /**
      * Determine if a given string starts with a given substring.
      *

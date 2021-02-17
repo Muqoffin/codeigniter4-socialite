@@ -4,6 +4,9 @@ namespace Fluent\Socialite\Two;
 
 use Fluent\Socialite\Helpers\Arr;
 
+use function array_merge;
+use function json_decode;
+
 class LinkedInProvider extends AbstractProvider
 {
     /**
@@ -59,7 +62,7 @@ class LinkedInProvider extends AbstractProvider
 
         $response = $this->getHttpClient()->get($url, [
             'headers' => [
-                'Authorization' => 'Bearer '.$token,
+                'Authorization'             => 'Bearer ' . $token,
                 'X-RestLi-Protocol-Version' => '2.0.0',
             ],
         ]);
@@ -79,7 +82,7 @@ class LinkedInProvider extends AbstractProvider
 
         $response = $this->getHttpClient()->get($url, [
             'headers' => [
-                'Authorization' => 'Bearer '.$token,
+                'Authorization'             => 'Bearer ' . $token,
                 'X-RestLi-Protocol-Version' => '2.0.0',
             ],
         ]);
@@ -92,26 +95,26 @@ class LinkedInProvider extends AbstractProvider
      */
     protected function mapUserToObject(array $user)
     {
-        $preferredLocale = Arr::get($user, 'firstName.preferredLocale.language').'_'.Arr::get($user, 'firstName.preferredLocale.country');
-        $firstName = Arr::get($user, 'firstName.localized.'.$preferredLocale);
-        $lastName = Arr::get($user, 'lastName.localized.'.$preferredLocale);
+        $preferredLocale = Arr::get($user, 'firstName.preferredLocale.language') . '_' . Arr::get($user, 'firstName.preferredLocale.country');
+        $firstName       = Arr::get($user, 'firstName.localized.' . $preferredLocale);
+        $lastName        = Arr::get($user, 'lastName.localized.' . $preferredLocale);
 
-        $images = (array) Arr::get($user, 'profilePicture.displayImage~.elements', []);
-        $avatar = Arr::first($images, function ($image) {
+        $images         = (array) Arr::get($user, 'profilePicture.displayImage~.elements', []);
+        $avatar         = Arr::first($images, function ($image) {
             return $image['data']['com.linkedin.digitalmedia.mediaartifact.StillImage']['storageSize']['width'] === 100;
         });
         $originalAvatar = Arr::first($images, function ($image) {
             return $image['data']['com.linkedin.digitalmedia.mediaartifact.StillImage']['storageSize']['width'] === 800;
         });
 
-        return (new User)->setRaw($user)->map([
-            'id' => $user['id'],
-            'nickname' => null,
-            'name' => $firstName.' '.$lastName,
-            'first_name' => $firstName,
-            'last_name' => $lastName,
-            'email' => Arr::get($user, 'emailAddress'),
-            'avatar' => Arr::get($avatar, 'identifiers.0.identifier'),
+        return (new User())->setRaw($user)->map([
+            'id'              => $user['id'],
+            'nickname'        => null,
+            'name'            => $firstName . ' ' . $lastName,
+            'first_name'      => $firstName,
+            'last_name'       => $lastName,
+            'email'           => Arr::get($user, 'emailAddress'),
+            'avatar'          => Arr::get($avatar, 'identifiers.0.identifier'),
             'avatar_original' => Arr::get($originalAvatar, 'identifiers.0.identifier'),
         ]);
     }

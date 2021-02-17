@@ -4,6 +4,10 @@ namespace Fluent\Socialite\Two;
 
 use Fluent\Socialite\Helpers\Arr;
 
+use function hash_hmac;
+use function implode;
+use function json_decode;
+
 class FacebookProvider extends AbstractProvider
 {
     /**
@@ -60,7 +64,7 @@ class FacebookProvider extends AbstractProvider
      */
     protected function getAuthUrl($state)
     {
-        return $this->buildAuthUrlFromBase('https://www.facebook.com/'.$this->version.'/dialog/oauth', $state);
+        return $this->buildAuthUrlFromBase('https://www.facebook.com/' . $this->version . '/dialog/oauth', $state);
     }
 
     /**
@@ -68,7 +72,7 @@ class FacebookProvider extends AbstractProvider
      */
     protected function getTokenUrl()
     {
-        return $this->graphUrl.'/'.$this->version.'/oauth/access_token';
+        return $this->graphUrl . '/' . $this->version . '/oauth/access_token';
     }
 
     /**
@@ -92,12 +96,12 @@ class FacebookProvider extends AbstractProvider
     {
         $this->lastToken = $token;
 
-        $meUrl = $this->graphUrl.'/'.$this->version.'/me?access_token='.$token.'&fields='.implode(',', $this->fields);
+        $meUrl = $this->graphUrl . '/' . $this->version . '/me?access_token=' . $token . '&fields=' . implode(',', $this->fields);
 
         if (! empty($this->clientSecret)) {
             $appSecretProof = hash_hmac('sha256', $token, $this->clientSecret);
 
-            $meUrl .= '&appsecret_proof='.$appSecretProof;
+            $meUrl .= '&appsecret_proof=' . $appSecretProof;
         }
 
         $response = $this->getHttpClient()->get($meUrl, [
@@ -114,16 +118,16 @@ class FacebookProvider extends AbstractProvider
      */
     protected function mapUserToObject(array $user)
     {
-        $avatarUrl = $this->graphUrl.'/'.$this->version.'/'.$user['id'].'/picture';
+        $avatarUrl = $this->graphUrl . '/' . $this->version . '/' . $user['id'] . '/picture';
 
-        return (new User)->setRaw($user)->map([
-            'id' => $user['id'],
-            'nickname' => null,
-            'name' => $user['name'] ?? null,
-            'email' => $user['email'] ?? null,
-            'avatar' => $avatarUrl.'?type=normal',
-            'avatar_original' => $avatarUrl.'?width=1920',
-            'profileUrl' => $user['link'] ?? null,
+        return (new User())->setRaw($user)->map([
+            'id'              => $user['id'],
+            'nickname'        => null,
+            'name'            => $user['name'] ?? null,
+            'email'           => $user['email'] ?? null,
+            'avatar'          => $avatarUrl . '?type=normal',
+            'avatar_original' => $avatarUrl . '?width=1920',
+            'profileUrl'      => $user['link'] ?? null,
         ]);
     }
 
@@ -195,7 +199,6 @@ class FacebookProvider extends AbstractProvider
     /**
      * Specify which graph version should be used.
      *
-     * @param  string  $version
      * @return $this
      */
     public function usingGraphVersion(string $version)

@@ -3,12 +3,27 @@
 namespace Fluent\Socialite\Two;
 
 use CodeIgniter\Config\Services;
-use CodeIgniter\HTTP\RedirectResponse;
 use CodeIgniter\HTTP\IncomingRequest;
-use GuzzleHttp\Client;
+use CodeIgniter\Session\SessionInterface;
+use Fluent\Socialite\Contracts\ProviderInterface;
 use Fluent\Socialite\Helpers\Arr;
 use Fluent\Socialite\Helpers\Str;
-use Fluent\Socialite\Contracts\ProviderInterface;
+use Fluent\Socialite\Two\User;
+use GuzzleHttp\Client;
+
+use function array_merge;
+use function array_unique;
+use function base64_encode;
+use function hash;
+use function http_build_query;
+use function implode;
+use function is_null;
+use function json_decode;
+use function rtrim;
+use function strlen;
+use function strtr;
+
+use const PHP_QUERY_RFC1738;
 
 abstract class AbstractProvider implements ProviderInterface
 {
@@ -22,7 +37,7 @@ abstract class AbstractProvider implements ProviderInterface
     /**
      * The HTTP Client instance.
      *
-     * @var \GuzzleHttp\Client
+     * @var Client
      */
     protected $httpClient;
 
@@ -99,21 +114,20 @@ abstract class AbstractProvider implements ProviderInterface
     /**
      * The cached user instance.
      *
-     * @var \Fluent\Socialite\Two\User|null
+     * @var User|null
      */
     protected $user;
 
     /**
      * The session intance.
-     * 
-     * @var \CodeIgniter\Session\SessionInterface
+     *
+     * @var SessionInterface
      */
     protected $session;
 
     /**
      * Create a new provider instance.
      *
-     * @param  \CodeIgniter\HTTP\IncomingRequest  $request
      * @param  string  $clientId
      * @param  string  $clientSecret
      * @param  string  $redirectUrl
@@ -122,11 +136,11 @@ abstract class AbstractProvider implements ProviderInterface
      */
     public function __construct(IncomingRequest $request, $clientId, $clientSecret, $redirectUrl, $guzzle = [])
     {
-        $this->guzzle = $guzzle;
-        $this->request = $request;
-        $this->session = Services::session();
-        $this->clientId = $clientId;
-        $this->redirectUrl = $redirectUrl;
+        $this->guzzle       = $guzzle;
+        $this->request      = $request;
+        $this->session      = Services::session();
+        $this->clientId     = $clientId;
+        $this->redirectUrl  = $redirectUrl;
         $this->clientSecret = $clientSecret;
     }
 
@@ -157,7 +171,7 @@ abstract class AbstractProvider implements ProviderInterface
      * Map the raw user array to a Socialite User instance.
      *
      * @param  array  $user
-     * @return \Fluent\Socialite\Two\User
+     * @return User
      */
     abstract protected function mapUserToObject(array $user);
 
@@ -178,7 +192,7 @@ abstract class AbstractProvider implements ProviderInterface
             $this->session->set('code_verifier', $this->getCodeVerifier());
         }
 
-        return new RedirectResponse($this->getAuthUrl($state));
+        return redirect()->to($this->getAuthUrl($state));
     }
 
     /**
@@ -190,7 +204,7 @@ abstract class AbstractProvider implements ProviderInterface
      */
     protected function buildAuthUrlFromBase($url, $state)
     {
-        return $url.'?'.http_build_query($this->getCodeFields($state), '', '&', $this->encodingType);
+        return $url . '?' . http_build_query($this->getCodeFields($state), '', '&', $this->encodingType);
     }
 
     /**
@@ -202,9 +216,9 @@ abstract class AbstractProvider implements ProviderInterface
     protected function getCodeFields($state = null)
     {
         $fields = [
-            'client_id' => $this->clientId,
-            'redirect_uri' => $this->redirectUrl,
-            'scope' => $this->formatScopes($this->getScopes(), $this->scopeSeparator),
+            'client_id'     => $this->clientId,
+            'redirect_uri'  => $this->redirectUrl,
+            'scope'         => $this->formatScopes($this->getScopes(), $this->scopeSeparator),
             'response_type' => 'code',
         ];
 
@@ -213,7 +227,7 @@ abstract class AbstractProvider implements ProviderInterface
         }
 
         if ($this->usesPKCE()) {
-            $fields['code_challenge'] = $this->getCodeChallenge();
+            $fields['code_challenge']        = $this->getCodeChallenge();
             $fields['code_challenge_method'] = $this->getCodeChallengeMethod();
         }
 
@@ -242,13 +256,13 @@ abstract class AbstractProvider implements ProviderInterface
         }
 
         if ($this->hasInvalidState()) {
-            throw new InvalidStateException;
+            throw new InvalidStateException();
         }
 
         $response = $this->getAccessTokenResponse($this->getCode());
 
         $this->user = $this->mapUserToObject($this->getUserByToken(
-            $token = Arr::get($response, 'access_token')
+            $token  = Arr::get($response, 'access_token')
         ));
 
         return $this->user->setToken($token)
@@ -260,7 +274,7 @@ abstract class AbstractProvider implements ProviderInterface
      * Get a Social User instance from a known access token.
      *
      * @param  string  $token
-     * @return \Fluent\Socialite\Two\User
+     * @return User
      */
     public function userFromToken($token)
     {
@@ -295,7 +309,7 @@ abstract class AbstractProvider implements ProviderInterface
     public function getAccessTokenResponse($code)
     {
         $response = $this->getHttpClient()->post($this->getTokenUrl(), [
-            'headers' => ['Accept' => 'application/json'],
+            'headers'     => ['Accept' => 'application/json'],
             'form_params' => $this->getTokenFields($code),
         ]);
 
@@ -311,11 +325,11 @@ abstract class AbstractProvider implements ProviderInterface
     protected function getTokenFields($code)
     {
         $fields = [
-            'grant_type' => 'authorization_code',
-            'client_id' => $this->clientId,
+            'grant_type'    => 'authorization_code',
+            'client_id'     => $this->clientId,
             'client_secret' => $this->clientSecret,
-            'code' => $code,
-            'redirect_uri' => $this->redirectUrl,
+            'code'          => $code,
+            'redirect_uri'  => $this->redirectUrl,
         ];
 
         if ($this->usesPKCE()) {
@@ -388,7 +402,7 @@ abstract class AbstractProvider implements ProviderInterface
     /**
      * Get a instance of the Guzzle HTTP client.
      *
-     * @return \GuzzleHttp\Client
+     * @return Client
      */
     protected function getHttpClient()
     {
@@ -402,7 +416,6 @@ abstract class AbstractProvider implements ProviderInterface
     /**
      * Set the Guzzle HTTP client instance.
      *
-     * @param  \GuzzleHttp\Client  $client
      * @return $this
      */
     public function setHttpClient(Client $client)
@@ -415,7 +428,6 @@ abstract class AbstractProvider implements ProviderInterface
     /**
      * Set the request instance.
      *
-     * @param  \CodeIgniter\Http\IncomingRequest  $request
      * @return $this
      */
     public function setRequest(IncomingRequest $request)

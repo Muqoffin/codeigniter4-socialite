@@ -5,6 +5,9 @@ namespace Fluent\Socialite\Two;
 use Exception;
 use Fluent\Socialite\Helpers\Arr;
 
+use function in_array;
+use function json_decode;
+
 class GithubProvider extends AbstractProvider
 {
     /**
@@ -38,7 +41,8 @@ class GithubProvider extends AbstractProvider
         $userUrl = 'https://api.github.com/user';
 
         $response = $this->getHttpClient()->get(
-            $userUrl, $this->getRequestOptions($token)
+            $userUrl,
+            $this->getRequestOptions($token)
         );
 
         $user = json_decode($response->getBody(), true);
@@ -62,7 +66,8 @@ class GithubProvider extends AbstractProvider
 
         try {
             $response = $this->getHttpClient()->get(
-                $emailsUrl, $this->getRequestOptions($token)
+                $emailsUrl,
+                $this->getRequestOptions($token)
             );
         } catch (Exception $e) {
             return;
@@ -80,12 +85,12 @@ class GithubProvider extends AbstractProvider
      */
     protected function mapUserToObject(array $user)
     {
-        return (new User)->setRaw($user)->map([
-            'id' => $user['id'],
+        return (new User())->setRaw($user)->map([
+            'id'       => $user['id'],
             'nickname' => $user['login'],
-            'name' => Arr::get($user, 'name'),
-            'email' => Arr::get($user, 'email'),
-            'avatar' => $user['avatar_url'],
+            'name'     => Arr::get($user, 'name'),
+            'email'    => Arr::get($user, 'email'),
+            'avatar'   => $user['avatar_url'],
         ]);
     }
 
@@ -99,8 +104,8 @@ class GithubProvider extends AbstractProvider
     {
         return [
             'headers' => [
-                'Accept' => 'application/vnd.github.v3+json',
-                'Authorization' => 'token '.$token,
+                'Accept'        => 'application/vnd.github.v3+json',
+                'Authorization' => 'token ' . $token,
             ],
         ];
     }

@@ -7,50 +7,45 @@ use CodeIgniter\Config\BaseConfig;
 class Socialite extends BaseConfig
 {
     /**
-     *--------------------------------------------------------------------------
+     * --------------------------------------------------------------------------
      * Third Party Services
-     *--------------------------------------------------------------------------
+     * --------------------------------------------------------------------------
      *
      * This file is for storing the credentials for third party services such
-     * as Mailgun, Postmark, AWS and more. This file provides the de facto
+     * as Github, Facebook, Google and more. This file provides the de facto
      * location for this type of information, allowing packages to have
      * a conventional file to locate the various service credentials.
      */
     public $services = [
         'github'    => [
-            'client_id'     => env('GITHUB_ID'),
-            'client_secret' => env('GITHUB_SECRET'),
-            'redirect'      => env('GITHUB_URL'),
+            'client_id'     => '',
+            'client_secret' => '',
+            'redirect'      => '',
         ],
-    
         'facebook'  => [
-            'client_id'     => env('FACEBOOK_ID'),
-            'client_secret' => env('FACEBOOK_SECRET'),
-            'redirect'      => env('FACEBOOK_URL'),
+            'client_id'     => '',
+            'client_secret' => '',
+            'redirect'      => '',
         ],
-    
         'google'    => [
-            'client_id'     => env('GOOGLE_ID'),
-            'client_secret' => env('GOOGLE_SECRET'),
-            'redirect'      => env('GOOGLE_URL'),
+            'client_id'     => '',
+            'client_secret' => '',
+            'redirect'      => '',
         ],
-
         'linkedin'  => [
-            'client_id'     => env('LINKEDIN_ID'),
-            'client_secret' => env('LINKEDIN_SECRET'),
-            'redirect'      => env('LINKEDIN_URL'),
+            'client_id'     => '',
+            'client_secret' => '',
+            'redirect'      => '',
         ],
-
         'bitbucket' => [
-            'client_id'     => env('BITBUCKET_ID'),
-            'client_secret' => env('BITBUCKET_SECRET'),
-            'redirect'      => env('BITBUCKET_URL'),
+            'client_id'     => '',
+            'client_secret' => '',
+            'redirect'      => '',
         ],
-    
         'gitlab'    => [
-            'client_id'     => env('GITLAB_ID'),
-            'client_secret' => env('GITLAB_SECRET'),
-            'redirect'      => env('GITLAB_URL'),
+            'client_id'     => '',
+            'client_secret' => '',
+            'redirect'      => '',
         ],
     ];
 }

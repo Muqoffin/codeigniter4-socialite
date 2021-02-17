@@ -2,6 +2,9 @@
 
 namespace Fluent\Socialite\Two;
 
+use function json_decode;
+use function rtrim;
+
 class GitlabProvider extends AbstractProvider
 {
     /**
@@ -45,7 +48,7 @@ class GitlabProvider extends AbstractProvider
      */
     protected function getAuthUrl($state)
     {
-        return $this->buildAuthUrlFromBase($this->host.'/oauth/authorize', $state);
+        return $this->buildAuthUrlFromBase($this->host . '/oauth/authorize', $state);
     }
 
     /**
@@ -53,7 +56,7 @@ class GitlabProvider extends AbstractProvider
      */
     protected function getTokenUrl()
     {
-        return $this->host.'/oauth/token';
+        return $this->host . '/oauth/token';
     }
 
     /**
@@ -61,13 +64,11 @@ class GitlabProvider extends AbstractProvider
      */
     protected function getUserByToken($token)
     {
-        $userUrl = $this->host.'/api/v3/user?access_token='.$token;
+        $userUrl = $this->host . '/api/v3/user?access_token=' . $token;
 
         $response = $this->getHttpClient()->get($userUrl);
 
-        $user = json_decode($response->getBody(), true);
-
-        return $user;
+        return json_decode($response->getBody(), true);
     }
 
     /**
@@ -75,12 +76,12 @@ class GitlabProvider extends AbstractProvider
      */
     protected function mapUserToObject(array $user)
     {
-        return (new User)->setRaw($user)->map([
-            'id' => $user['id'],
+        return (new User())->setRaw($user)->map([
+            'id'       => $user['id'],
             'nickname' => $user['username'],
-            'name' => $user['name'],
-            'email' => $user['email'],
-            'avatar' => $user['avatar_url'],
+            'name'     => $user['name'],
+            'email'    => $user['email'],
+            'avatar'   => $user['avatar_url'],
         ]);
     }
 }
