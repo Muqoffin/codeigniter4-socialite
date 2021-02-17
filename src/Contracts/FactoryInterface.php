@@ -1,14 +1,14 @@
 <?php
 
-namespace Laravel\Socialite\Contracts;
+namespace Fluent\Socialite\Contracts;
 
-interface Factory
+interface FactoryInterface
 {
     /**
      * Get an OAuth provider implementation.
      *
      * @param  string  $driver
-     * @return \Laravel\Socialite\Contracts\Provider
+     * @return \Fluent\Socialite\Contracts\ProviderInterface
      */
     public function driver($driver = null);
 }

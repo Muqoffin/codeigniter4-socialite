@@ -1,23 +1,26 @@
 <?php
 
-namespace Laravel\Socialite\Facades;
+namespace Fluent\Socialite\Facades;
 
-use Illuminate\Support\Facades\Facade;
-use Laravel\Socialite\Contracts\Factory;
+use CodeIgniter\Config\BaseService;
+use Fluent\Socialite\SocialiteManager;
 
 /**
- * @method static \Laravel\Socialite\Contracts\Provider driver(string $driver = null)
- * @see \Laravel\Socialite\SocialiteManager
+ * @see \Fluent\Socialite\SocialiteManager
+ * 
+ * @method static \Fluent\Socialite\Contracts\ProviderInterface driver(string $driver = null)
  */
-class Socialite extends Facade
+class Socialite
 {
     /**
-     * Get the registered name of the component.
-     *
-     * @return string
+     * Socialite facade service instance.
+     * 
+     * @param string $method
+     * @param array $arguments
+     * @return SocialiteManager
      */
-    protected static function getFacadeAccessor()
+    public static function __callStatic($method, $arguments)
     {
-        return Factory::class;
+        return BaseService::getSharedInstance('socialite')->{$method}(...$arguments);
     }
 }

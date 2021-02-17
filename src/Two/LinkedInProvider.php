@@ -1,10 +1,10 @@
 <?php
 
-namespace Laravel\Socialite\Two;
+namespace Fluent\Socialite\Two;
 
-use Illuminate\Support\Arr;
+use Fluent\Socialite\Helpers\Arr;
 
-class LinkedInProvider extends AbstractProvider implements ProviderInterface
+class LinkedInProvider extends AbstractProvider
 {
     /**
      * The scopes being requested.

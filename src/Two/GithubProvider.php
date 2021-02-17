@@ -1,11 +1,11 @@
 <?php
 
-namespace Laravel\Socialite\Two;
+namespace Fluent\Socialite\Two;
 
 use Exception;
-use Illuminate\Support\Arr;
+use Fluent\Socialite\Helpers\Arr;
 
-class GithubProvider extends AbstractProvider implements ProviderInterface
+class GithubProvider extends AbstractProvider
 {
     /**
      * The scopes being requested.

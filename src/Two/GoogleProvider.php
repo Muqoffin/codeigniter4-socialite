@@ -1,10 +1,10 @@
 <?php
 
-namespace Laravel\Socialite\Two;
+namespace Fluent\Socialite\Two;
 
-use Illuminate\Support\Arr;
+use Fluent\Socialite\Helpers\Arr;
 
-class GoogleProvider extends AbstractProvider implements ProviderInterface
+class GoogleProvider extends AbstractProvider
 {
     /**
      * The separating character for the requested scopes.

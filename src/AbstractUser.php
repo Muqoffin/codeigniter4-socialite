@@ -1,11 +1,11 @@
 <?php
 
-namespace Laravel\Socialite;
+namespace Fluent\Socialite;
 
 use ArrayAccess;
-use Laravel\Socialite\Contracts\User;
+use Fluent\Socialite\Contracts\UserInterface;
 
-abstract class AbstractUser implements ArrayAccess, User
+abstract class AbstractUser implements ArrayAccess, UserInterface
 {
     /**
      * The unique identifier for the user.

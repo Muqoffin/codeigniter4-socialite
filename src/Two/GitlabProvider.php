@@ -1,8 +1,8 @@
 <?php
 
-namespace Laravel\Socialite\Two;
+namespace Fluent\Socialite\Two;
 
-class GitlabProvider extends AbstractProvider implements ProviderInterface
+class GitlabProvider extends AbstractProvider
 {
     /**
      * The scopes being requested.

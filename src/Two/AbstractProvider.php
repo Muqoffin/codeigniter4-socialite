@@ -1,20 +1,21 @@
 <?php
 
-namespace Laravel\Socialite\Two;
+namespace Fluent\Socialite\Two;
 
+use CodeIgniter\Config\Services;
+use CodeIgniter\HTTP\RedirectResponse;
+use CodeIgniter\HTTP\IncomingRequest;
 use GuzzleHttp\Client;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
-use Laravel\Socialite\Contracts\Provider as ProviderContract;
+use Fluent\Socialite\Helpers\Arr;
+use Fluent\Socialite\Helpers\Str;
+use Fluent\Socialite\Contracts\ProviderInterface;
 
-abstract class AbstractProvider implements ProviderContract
+abstract class AbstractProvider implements ProviderInterface
 {
     /**
      * The HTTP request instance.
      *
-     * @var \Illuminate\Http\Request
+     * @var CodeIgniter\HTTP\IncomingRequest
      */
     protected $request;
 
@@ -98,24 +99,32 @@ abstract class AbstractProvider implements ProviderContract
     /**
      * The cached user instance.
      *
-     * @var \Laravel\Socialite\Two\User|null
+     * @var \Fluent\Socialite\Two\User|null
      */
     protected $user;
 
     /**
+     * The session intance.
+     * 
+     * @var \CodeIgniter\Session\SessionInterface
+     */
+    protected $session;
+
+    /**
      * Create a new provider instance.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \CodeIgniter\HTTP\IncomingRequest  $request
      * @param  string  $clientId
      * @param  string  $clientSecret
      * @param  string  $redirectUrl
      * @param  array  $guzzle
      * @return void
      */
-    public function __construct(Request $request, $clientId, $clientSecret, $redirectUrl, $guzzle = [])
+    public function __construct(IncomingRequest $request, $clientId, $clientSecret, $redirectUrl, $guzzle = [])
     {
         $this->guzzle = $guzzle;
         $this->request = $request;
+        $this->session = Services::session();
         $this->clientId = $clientId;
         $this->redirectUrl = $redirectUrl;
         $this->clientSecret = $clientSecret;
@@ -148,25 +157,25 @@ abstract class AbstractProvider implements ProviderContract
      * Map the raw user array to a Socialite User instance.
      *
      * @param  array  $user
-     * @return \Laravel\Socialite\Two\User
+     * @return \Fluent\Socialite\Two\User
      */
     abstract protected function mapUserToObject(array $user);
 
     /**
      * Redirect the user of the application to the provider's authentication screen.
      *
-     * @return \Illuminate\Http\RedirectResponse
+     * @return CodeIgniter\HTTP\RedirectResponse
      */
     public function redirect()
     {
         $state = null;
 
         if ($this->usesState()) {
-            $this->request->session()->put('state', $state = $this->getState());
+            $this->session->set('state', $state = $this->getState());
         }
 
         if ($this->usesPKCE()) {
-            $this->request->session()->put('code_verifier', $codeVerifier = $this->getCodeVerifier());
+            $this->session->set('code_verifier', $this->getCodeVerifier());
         }
 
         return new RedirectResponse($this->getAuthUrl($state));
@@ -243,15 +252,15 @@ abstract class AbstractProvider implements ProviderContract
         ));
 
         return $this->user->setToken($token)
-                    ->setRefreshToken(Arr::get($response, 'refresh_token'))
-                    ->setExpiresIn(Arr::get($response, 'expires_in'));
+            ->setRefreshToken(Arr::get($response, 'refresh_token'))
+            ->setExpiresIn(Arr::get($response, 'expires_in'));
     }
 
     /**
      * Get a Social User instance from a known access token.
      *
      * @param  string  $token
-     * @return \Laravel\Socialite\Two\User
+     * @return \Fluent\Socialite\Two\User
      */
     public function userFromToken($token)
     {
@@ -271,9 +280,10 @@ abstract class AbstractProvider implements ProviderContract
             return false;
         }
 
-        $state = $this->request->session()->pull('state');
+        $state = $this->session->get('state');
+        $this->session->remove('state');
 
-        return ! (strlen($state) > 0 && $this->request->input('state') === $state);
+        return ! (strlen($state) > 0 && $this->request->getGet('state') === $state);
     }
 
     /**
@@ -309,7 +319,8 @@ abstract class AbstractProvider implements ProviderContract
         ];
 
         if ($this->usesPKCE()) {
-            $fields['code_verifier'] = $this->request->session()->pull('code_verifier');
+            $fields['code_verifier'] = $this->session->get('code_verifier');
+            $this->session->remove('code_verifier');
         }
 
         return $fields;
@@ -322,7 +333,7 @@ abstract class AbstractProvider implements ProviderContract
      */
     protected function getCode()
     {
-        return $this->request->input('code');
+        return $this->request->getGet('code');
     }
 
     /**
@@ -404,10 +415,10 @@ abstract class AbstractProvider implements ProviderContract
     /**
      * Set the request instance.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \CodeIgniter\Http\IncomingRequest  $request
      * @return $this
      */
-    public function setRequest(Request $request)
+    public function setRequest(IncomingRequest $request)
     {
         $this->request = $request;
 
@@ -483,7 +494,7 @@ abstract class AbstractProvider implements ProviderContract
      */
     protected function getCodeChallenge()
     {
-        $hashed = hash('sha256', $this->request->session()->get('code_verifier'), true);
+        $hashed = hash('sha256', $this->session->get('code_verifier'));
 
         return rtrim(strtr(base64_encode($hashed), '+/', '-_'), '=');
     }
