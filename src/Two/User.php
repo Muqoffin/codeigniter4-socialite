@@ -28,10 +28,7 @@ class User extends AbstractUser
     public $expiresIn;
 
     /**
-     * Set the token on the user.
-     *
-     * @param  string  $token
-     * @return $this
+     * {@inheritdoc}
      */
     public function setToken($token)
     {
@@ -41,10 +38,7 @@ class User extends AbstractUser
     }
 
     /**
-     * Set the refresh token required to obtain a new access token.
-     *
-     * @param  string  $refreshToken
-     * @return $this
+     * {@inheritdoc}
      */
     public function setRefreshToken($refreshToken)
     {
@@ -54,10 +48,7 @@ class User extends AbstractUser
     }
 
     /**
-     * Set the number of seconds the access token is valid for.
-     *
-     * @param  int  $expiresIn
-     * @return $this
+     * {@inheritdoc}
      */
     public function setExpiresIn($expiresIn)
     {

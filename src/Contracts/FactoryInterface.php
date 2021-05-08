@@ -40,9 +40,7 @@ interface FactoryInterface
     /**
      * Build an OAuth 2 provider instance.
      *
-     * @param  string  $provider
-     * @param  array  $config
-     * @return AbstractProvider
+     * @return ProviderInterface
      */
-    public function buildProvider($provider, $config);
+    public function buildProvider(string $provider, array $config);
 }

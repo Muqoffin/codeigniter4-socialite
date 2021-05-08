@@ -3,7 +3,7 @@
 namespace Fluent\Socialite\Two;
 
 use CodeIgniter\Config\Services;
-use CodeIgniter\HTTP\IncomingRequest;
+use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\Session\SessionInterface;
 use Fluent\Socialite\Contracts\ProviderInterface;
 use Fluent\Socialite\Helpers\Arr;
@@ -30,7 +30,7 @@ abstract class AbstractProvider implements ProviderInterface
     /**
      * The HTTP request instance.
      *
-     * @var CodeIgniter\HTTP\IncomingRequest
+     * @var CodeIgniter\HTTP\RequestInterface
      */
     protected $request;
 
@@ -134,7 +134,7 @@ abstract class AbstractProvider implements ProviderInterface
      * @param  array  $guzzle
      * @return void
      */
-    public function __construct(IncomingRequest $request, $clientId, $clientSecret, $redirectUrl, $guzzle = [])
+    public function __construct(RequestInterface $request, $clientId, $clientSecret, $redirectUrl, $guzzle = [])
     {
         $this->guzzle       = $guzzle;
         $this->request      = $request;
@@ -176,9 +176,7 @@ abstract class AbstractProvider implements ProviderInterface
     abstract protected function mapUserToObject(array $user);
 
     /**
-     * Redirect the user of the application to the provider's authentication screen.
-     *
-     * @return CodeIgniter\HTTP\RedirectResponse
+     * {@inheritdoc}
      */
     public function redirect()
     {
@@ -271,10 +269,7 @@ abstract class AbstractProvider implements ProviderInterface
     }
 
     /**
-     * Get a Social User instance from a known access token.
-     *
-     * @param  string  $token
-     * @return User
+     * {@inheritdoc}
      */
     public function userFromToken($token)
     {
@@ -301,10 +296,7 @@ abstract class AbstractProvider implements ProviderInterface
     }
 
     /**
-     * Get the access token response for the given code.
-     *
-     * @param  string  $code
-     * @return array
+     * {@inheritdoc}
      */
     public function getAccessTokenResponse($code)
     {
@@ -351,10 +343,7 @@ abstract class AbstractProvider implements ProviderInterface
     }
 
     /**
-     * Merge the scopes of the requested access.
-     *
-     * @param  array|string  $scopes
-     * @return $this
+     * {@inheritdoc}
      */
     public function scopes($scopes)
     {
@@ -364,10 +353,7 @@ abstract class AbstractProvider implements ProviderInterface
     }
 
     /**
-     * Set the scopes of the requested access.
-     *
-     * @param  array|string  $scopes
-     * @return $this
+     * {@inheritdoc}
      */
     public function setScopes($scopes)
     {
@@ -377,9 +363,7 @@ abstract class AbstractProvider implements ProviderInterface
     }
 
     /**
-     * Get the current scopes.
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getScopes()
     {
@@ -387,10 +371,7 @@ abstract class AbstractProvider implements ProviderInterface
     }
 
     /**
-     * Set the redirect URL.
-     *
-     * @param  string  $url
-     * @return $this
+     * {@inheritdoc}
      */
     public function redirectUrl($url)
     {
@@ -414,9 +395,7 @@ abstract class AbstractProvider implements ProviderInterface
     }
 
     /**
-     * Set the Guzzle HTTP client instance.
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setHttpClient(Client $client)
     {
@@ -426,11 +405,9 @@ abstract class AbstractProvider implements ProviderInterface
     }
 
     /**
-     * Set the request instance.
-     *
-     * @return $this
+     * {@inheritdoc}
      */
-    public function setRequest(IncomingRequest $request)
+    public function setRequest(RequestInterface $request)
     {
         $this->request = $request;
 
@@ -458,9 +435,7 @@ abstract class AbstractProvider implements ProviderInterface
     }
 
     /**
-     * Indicates that the provider should operate as stateless.
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function stateless()
     {
@@ -522,10 +497,7 @@ abstract class AbstractProvider implements ProviderInterface
     }
 
     /**
-     * Set the custom parameters of the request.
-     *
-     * @param  array  $parameters
-     * @return $this
+     * {@inheritdoc}
      */
     public function with(array $parameters)
     {

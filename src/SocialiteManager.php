@@ -158,11 +158,9 @@ class SocialiteManager implements FactoryInterface
      */
     protected function createGithubDriver()
     {
-        $config = $this->config->services['github'];
-
         return $this->buildProvider(
             GithubProvider::class,
-            $config
+            $this->config->services['github']
         );
     }
 
@@ -173,11 +171,9 @@ class SocialiteManager implements FactoryInterface
      */
     protected function createFacebookDriver()
     {
-        $config = $this->config->services['facebook'];
-
         return $this->buildProvider(
             FacebookProvider::class,
-            $config
+            $this->config->services['facebook']
         );
     }
 
@@ -188,11 +184,9 @@ class SocialiteManager implements FactoryInterface
      */
     protected function createGoogleDriver()
     {
-        $config = $this->config->services['google'];
-
         return $this->buildProvider(
             GoogleProvider::class,
-            $config
+            $this->config->services['google']
         );
     }
 
@@ -203,11 +197,9 @@ class SocialiteManager implements FactoryInterface
      */
     protected function createLinkedinDriver()
     {
-        $config = $this->config->services['linkedin'];
-
         return $this->buildProvider(
             LinkedInProvider::class,
-            $config
+            $this->config->services['linkedin']
         );
     }
 
@@ -218,11 +210,9 @@ class SocialiteManager implements FactoryInterface
      */
     protected function createBitbucketDriver()
     {
-        $config = $this->config->services['bitbucket'];
-
         return $this->buildProvider(
             BitbucketProvider::class,
-            $config
+            $this->config->services['bitbucket']
         );
     }
 
@@ -233,18 +223,16 @@ class SocialiteManager implements FactoryInterface
      */
     protected function createGitlabDriver()
     {
-        $config = $this->config->services['gitlab'];
-
         return $this->buildProvider(
             GitlabProvider::class,
-            $config
+            $config = $this->config->services['gitlab']
         )->setHost($config['host'] ?? null);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function buildProvider($provider, $config)
+    public function buildProvider(string $provider, array $config)
     {
         return new $provider(
             Services::request(),

@@ -3,10 +3,9 @@
 namespace Fluent\Socialite\Facades;
 
 use Closure;
-use CodeIgniter\Config\BaseService;
+use Fluent\Socialite\Config\Services;
 use Fluent\Socialite\Contracts\FactoryInterface;
 use Fluent\Socialite\Contracts\ProviderInterface;
-use Fluent\Socialite\Two\AbstractProvider;
 
 /**
  * @see \Fluent\Socialite\Contracts\FactoryInterface
@@ -16,7 +15,7 @@ use Fluent\Socialite\Two\AbstractProvider;
  * @method static $this extend($driver, Closure $callback)
  * @method static array getDrivers()
  * @method static string getDefaultDriver()
- * @method static AbstractProvider buildProvider($provider, $config)
+ * @method static ProviderInterface buildProvider($provider, $config)
  */
 class Socialite
 {
@@ -29,6 +28,6 @@ class Socialite
      */
     public static function __callStatic($method, $arguments)
     {
-        return BaseService::getSharedInstance('socialite')->{$method}(...$arguments);
+        return Services::getSharedInstance('socialite')->{$method}(...$arguments);
     }
 }

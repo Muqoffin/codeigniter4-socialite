@@ -2,7 +2,9 @@
 
 namespace Fluent\Socialite\Contracts;
 
-interface UserInterface
+use ArrayAccess;
+
+interface UserInterface extends ArrayAccess
 {
     /**
      * Get the unique identifier for the user.
@@ -38,4 +40,51 @@ interface UserInterface
      * @return string
      */
     public function getAvatar();
+
+     /**
+      * Get the raw user array.
+      *
+      * @return array
+      */
+    public function getRaw();
+
+    /**
+     * Set the raw user array from the provider.
+     *
+     * @param  array  $user
+     * @return $this
+     */
+    public function setRaw(array $user);
+
+    /**
+     * Map the given array onto the user's properties.
+     *
+     * @param  array  $attributes
+     * @return $this
+     */
+    public function map(array $attributes);
+
+    /**
+     * Set the token on the user.
+     *
+     * @param  string  $token
+     * @return $this
+     */
+    public function setToken($token);
+
+    /**
+     * Set the refresh token required to obtain a new access token.
+     *
+     * @param  string  $refreshToken
+     * @return $this
+     */
+    public function setRefreshToken($refreshToken);
+
+    /**
+     * Set the number of seconds the access token is valid for.
+     *
+     * @param  int  $expiresIn
+     * @return $this
+     */
+    public function setExpiresIn($expiresIn);
 }

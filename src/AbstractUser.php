@@ -2,12 +2,11 @@
 
 namespace Fluent\Socialite;
 
-use ArrayAccess;
 use Fluent\Socialite\Contracts\UserInterface;
 
 use function array_key_exists;
 
-abstract class AbstractUser implements ArrayAccess, UserInterface
+abstract class AbstractUser implements UserInterface
 {
     /**
      * The unique identifier for the user.
@@ -52,9 +51,7 @@ abstract class AbstractUser implements ArrayAccess, UserInterface
     public $user;
 
     /**
-     * Get the unique identifier for the user.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getId()
     {
@@ -62,9 +59,7 @@ abstract class AbstractUser implements ArrayAccess, UserInterface
     }
 
     /**
-     * Get the nickname / username for the user.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getNickname()
     {
@@ -72,9 +67,7 @@ abstract class AbstractUser implements ArrayAccess, UserInterface
     }
 
     /**
-     * Get the full name of the user.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getName()
     {
@@ -82,9 +75,7 @@ abstract class AbstractUser implements ArrayAccess, UserInterface
     }
 
     /**
-     * Get the e-mail address of the user.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getEmail()
     {
@@ -92,9 +83,7 @@ abstract class AbstractUser implements ArrayAccess, UserInterface
     }
 
     /**
-     * Get the avatar / image URL for the user.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getAvatar()
     {
@@ -102,9 +91,7 @@ abstract class AbstractUser implements ArrayAccess, UserInterface
     }
 
     /**
-     * Get the raw user array.
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getRaw()
     {
@@ -112,10 +99,7 @@ abstract class AbstractUser implements ArrayAccess, UserInterface
     }
 
     /**
-     * Set the raw user array from the provider.
-     *
-     * @param  array  $user
-     * @return $this
+     * {@inheritdoc}
      */
     public function setRaw(array $user)
     {
@@ -125,10 +109,7 @@ abstract class AbstractUser implements ArrayAccess, UserInterface
     }
 
     /**
-     * Map the given array onto the user's properties.
-     *
-     * @param  array  $attributes
-     * @return $this
+     * {@inheritdoc}
      */
     public function map(array $attributes)
     {
@@ -140,10 +121,7 @@ abstract class AbstractUser implements ArrayAccess, UserInterface
     }
 
     /**
-     * Determine if the given raw user attribute exists.
-     *
-     * @param  string  $offset
-     * @return bool
+     * {@inheritdoc}
      */
     public function offsetExists($offset)
     {
@@ -151,10 +129,7 @@ abstract class AbstractUser implements ArrayAccess, UserInterface
     }
 
     /**
-     * Get the given key from the raw user.
-     *
-     * @param  string  $offset
-     * @return mixed
+     * {@inheritdoc}
      */
     public function offsetGet($offset)
     {
@@ -162,11 +137,7 @@ abstract class AbstractUser implements ArrayAccess, UserInterface
     }
 
     /**
-     * Set the given attribute on the raw user array.
-     *
-     * @param  string  $offset
-     * @param  mixed  $value
-     * @return void
+     * {@inheritdoc}
      */
     public function offsetSet($offset, $value)
     {
@@ -174,10 +145,7 @@ abstract class AbstractUser implements ArrayAccess, UserInterface
     }
 
     /**
-     * Unset the given value from the raw user array.
-     *
-     * @param  string  $offset
-     * @return void
+     * {@inheritdoc}
      */
     public function offsetUnset($offset)
     {
